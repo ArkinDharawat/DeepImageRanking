@@ -102,3 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# tiny imagenet dataset 
+tiny-imagenet-200/
+*.zip
+
