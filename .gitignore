@@ -103,6 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# csvs
+*.csv
 # tiny imagenet dataset 
 tiny-imagenet-200/
 *.zip
