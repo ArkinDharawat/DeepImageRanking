@@ -6,7 +6,7 @@ import torchvision
 import torch.optim as optim
 from torchvision import transforms
 from torch.autograd import Variable
-
+#testing
 import time
 
 from DatasetLoader import DatasetImageNet
@@ -166,6 +166,8 @@ def custom_loss(y_pred):
     Custom Loss function for Image ranking
     :param y_pred:
     :return:
+
+
     """
     g = torch.Tensor(1)
     loss = Variable(torch.Tensor(0.)).cuda()
