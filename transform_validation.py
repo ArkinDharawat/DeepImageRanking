@@ -1,4 +1,4 @@
-import sys, os
+import os
 
 validation_path = "tiny-imagenet-200/val/"
 
@@ -16,6 +16,6 @@ for line in annotation_file:
         if not os.path.exists(os.path.join(folder_path, "images")):
             print(os.makedirs(os.path.join(folder_path, "images")))
 
-    os.rename(image_path, os.path.join(folder_path, "images/"+image)) # maybe replace with shutil
+    os.rename(image_path, os.path.join(folder_path, "images/"+image)) # TODO: maybe replace with shutil
 
-    break
+    # break

@@ -151,9 +151,9 @@ class DeepRank(nn.Module):
         second_norm = second_input.norm(p=2, dim=1, keepdim=True)
         second_input = second_input.div(second_norm.expand_as(second_input))
 
-        merge_subsample = torch.cat([first_input, second_input], 1) # batch x (3076)
+        merge_subsample = torch.cat([first_input, second_input], 1) # batch x (3072)
 
-        merge_conv = torch.cat([merge_subsample, conv_input], 1) #  batch x (4096 + 3076)
+        merge_conv = torch.cat([merge_subsample, conv_input], 1) #  batch x (4096 + 3072)
 
         final_input = self.dense_layer(merge_conv)
         final_norm = final_input.norm(p=2, dim=1, keepdim=True)

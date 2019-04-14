@@ -3,7 +3,6 @@ import json
 import random
 import csv
 import os
-import re
 import argparse
 import numpy as np
 import pandas as pd
@@ -47,6 +46,14 @@ def get_positive_images(image_name,image_names,num_pos_images):
     return positive_images
 
 def generate_triplets(training, dataset_path, num_neg_images,num_pos_images):
+    """
+    Generate query, postivie and negative image triplets for training/testing
+    :param training: 0 or 1 based on training or testing dataset
+    :param dataset_path: the dataset path
+    :param num_neg_images: number of negative images per query
+    :param num_pos_images: number of positive images per query
+    :return: void
+    """
     triplet_dataframe = pd.DataFrame(columns=["query", "positive", "negative"])
 
     all_images = []
@@ -116,5 +123,5 @@ if __name__ == '__main__':
     print("Number of Negative image per Query image: " + args.num_neg_images)
 
 
-    generate_triplets(args.training, dataset_path, args.num_neg_images, args.num_pos_images)
+    generate_triplets(int(args.training), dataset_path, args.num_neg_images, args.num_pos_images)
 
