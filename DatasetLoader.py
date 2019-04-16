@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 import torchvision
 from torchvision import transforms
+from PIL import Image
 
 class DatasetImageNet(Dataset):
     """
@@ -20,17 +21,13 @@ class DatasetImageNet(Dataset):
 
     def __getitem__(self, index):
         row = self.data.iloc[index,:]
-        images = [imread(row[i]).astype(np.float32) for i in range(0, 3)]
-
-        for i in range(0, 3):
-            if images[i].shape == (64, 64):
-                images[i] = np.asarray([images[i][:], images[i][:], images[i][:]]) # TODO: CHANE RGB TO GRAYSCALE
-            images[i] = images[i][:].reshape((3, 64, 64))
-
-        q_image, p_image, n_image = images[0], images[1], images[2]
+        images = [Image.open(row[i]).convert('RGB') for i in range(0, 3)]
 
         if self.transform is not None:
-            q_image = self.transform(q_image) # TODO: Apply to all or only to query?
+            for i in range(0, 3):
+                images[i] = self.transform(images[i])
+
+        q_image, p_image, n_image = images[0], images[1], images[2]
 
         return q_image, p_image, n_image
 
@@ -40,7 +37,13 @@ def test_dataloader():
     Method to test dataloader
     :return: Void
     """
-    train_dataset = DatasetImageNet("training_triplet_sample.csv", None)
+    transform_train = transforms.Compose([
+        transforms.Resize(224, interpolation=2),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+
+    train_dataset = DatasetImageNet("training_triplet_sample.csv", transform=transform_train)
     train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
 
     train_iter = iter(train_loader)
