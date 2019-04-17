@@ -30,7 +30,7 @@ class ConvNet(nn.Module):
         super(ConvNet, self).__init__()
 
         # Everything except the last linear layer
-        resnet = models.resnet101(pretrained=True)
+        resnet = models.resnet101(pretrained=False)
         self.features = nn.Sequential(*list(resnet.children())[:-1])
         num_ftrs = resnet.fc.in_features
         self.fc1 = nn.Linear(num_ftrs, 4096)

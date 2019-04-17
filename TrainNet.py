@@ -6,13 +6,13 @@ import torch.optim as optim
 from torchvision import transforms
 from torch.autograd import Variable
 #testing
+import numpy as np
 import time
 
 from DeepRankNet import DeepRank
 
 from DatasetLoader import DatasetImageNet
 
-DIM = 32
 BATCH_SIZE = 4
 LEARNING_RATE =  0.001
 VERBOSE  = 1
@@ -35,9 +35,6 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
-
-
-
 
 
 #TODO: add transformer for dataset?
@@ -63,8 +60,6 @@ def train_and_eval_model(num_epochs, optim_name=""):
 
     model.train()
     train_loss = []
-
-    criterion = nn.TripletMarginLoss(margin=1, p=2)
 
     start_time = time.time()
 
@@ -95,17 +90,19 @@ def train_and_eval_model(num_epochs, optim_name=""):
 
             loss = F.triplet_margin_loss(anchor=query_embedding, positive=postive_embedding, negative=negative_embedding)
 
-            print(torch.norm(loss, p=2))
-
             loss.backward()
+
+            train_loss.append(loss.data[0])
+            optimizer.step()
             # break
-        break
-        accuracy_epoch = np.mean(train_accu)
+        # break
+        # accuracy_epoch = np.mean(train_accu)
         loss_epoch = np.mean(train_loss)
-        print(epoch, accuracy_epoch, loss_epoch)
+        print(epoch, loss_epoch)
 
     end_time = time.time()
     print("Total training time " + str(end_time - start_time))
+    torch.save(model, 'deepranknet.model')
 
 if __name__ == '__main__':
-    train_and_eval_model(num_epochs=1)
+    train_and_eval_model(num_epochs=2)
