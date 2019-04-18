@@ -16,7 +16,7 @@ from DatasetLoader import DatasetImageNet
 use_cuda = torch.cuda.is_available()
 print("Cuda?: "+str(use_cuda))
 
-BATCH_SIZE = 4
+BATCH_SIZE = 16
 transform_train = transforms.Compose([
     transforms.Resize(224, interpolation=2),
     transforms.ToTensor(),
@@ -25,9 +25,17 @@ transform_train = transforms.Compose([
 train_dataset = DatasetImageNet("training_triplet_sample.csv", transform=transform_train)
 trainloader =  torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=8)
 
-model = DeepRank()
-checkpoint = torch.load("mytraining.pt")
-model.load_state_dict(checkpoint['state_dict'])
+
+test_dataset = DatasetImageNet("test_triplet_sample.csv", transform=transform_train)
+testloader =  torch.utils.data.DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=8)
+
+
+# model = DeepRank()
+model = torch.load('deepranknet.model')
+if use_cuda:
+    model.cuda()
+model.eval()
+
 
 embedded_features = []
 for batch_idx, (X_train_query, X_train_postive, X_train_negative) in enumerate(trainloader):
@@ -45,8 +53,32 @@ for batch_idx, (X_train_query, X_train_postive, X_train_negative) in enumerate(t
                 X_train_negative = Variable(X_train_negative)#.cuda()
 
 
-            X_embedding = model(X_train_query)
+            embedding = model(X_train_query)
+            embedding_np = embedding.cpu().detach().numpy()
 
+            embedded_features.append(embedding_np)
 
+            # break
 
+embedded_features_train = np.concatenate(embedded_features, axis=0)
 
+embedded_features_train.astype('float32').tofile('train_embedding.txt') # save trained embedding
+
+embedded_features = []
+for batch_idx, (X_test_query, _, _) in enumerate(testloader):
+    if (X_train_query.shape[0] < BATCH_SIZE):
+        continue
+
+    if use_cuda:
+        X_test_query = Variable(X_test_query).cuda()
+    else:
+        X_test_query = Variable(X_test_query)  # .cuda()
+
+    embedding = model(X_test_query)
+    embedding_np = embedding.cpu().detach().numpy()
+
+    embedded_features.append(embedding_np)
+
+embedded_features_test = np.concatenate(embedded_features, axis=0)
+
+embedded_features_test.astype('float32').tofile('test_embedding.txt') # save trained embedding

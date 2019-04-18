@@ -105,7 +105,10 @@ venv.bak/
 
 # csvs
 *.csv
+
 # tiny imagenet dataset 
 tiny-imagenet-200/
 *.zip
 
+test_embedding.txt
+train_embedding.txt
