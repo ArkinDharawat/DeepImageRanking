@@ -16,7 +16,14 @@ from DatasetLoader import DatasetImageNet
 use_cuda = torch.cuda.is_available()
 print("Cuda?: "+str(use_cuda))
 
-BATCH_SIZE = 16
+
+def correct_triplet(anchor, positive, negative, size_average=False):
+    distance_positive = (anchor - positive).pow(2).sum(1)  # .pow(.5)
+    distance_negative = (anchor - negative).pow(2).sum(1)  # .pow(.5)
+    losses = F.relu(distance_positive - distance_negative + 1.0)
+    return losses.mean() if size_average else losses.sum()
+
+BATCH_SIZE = 8
 transform_train = transforms.Compose([
     transforms.Resize(224, interpolation=2),
     transforms.ToTensor(),
@@ -30,6 +37,7 @@ test_dataset = DatasetImageNet("test_triplet_sample.csv", transform=transform_tr
 testloader =  torch.utils.data.DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=8)
 
 
+
 # model = DeepRank()
 model = torch.load('deepranknet.model')
 if use_cuda:
@@ -37,7 +45,10 @@ if use_cuda:
 model.eval()
 
 
+print("Generating train embedding...")
+
 embedded_features = []
+triplet_ranks = 0
 for batch_idx, (X_train_query, X_train_postive, X_train_negative) in enumerate(trainloader):
 
             if (X_train_query.shape[0] < BATCH_SIZE):
@@ -54,30 +65,52 @@ for batch_idx, (X_train_query, X_train_postive, X_train_negative) in enumerate(t
 
 
             embedding = model(X_train_query)
+            embedding_p = model(X_train_postive)
+            embedding_n = model(X_train_negative)
             embedding_np = embedding.cpu().detach().numpy()
+
+
 
             embedded_features.append(embedding_np)
 
+            correctly_ranked_triplets = correct_triplet(embedding, embedding_p, embedding_n)
+            triplet_ranks += correctly_ranked_triplets
+
             # break
 
+print("Train triplets ranked correctly:", triplet_ranks, triplet_ranks/100000.)
 embedded_features_train = np.concatenate(embedded_features, axis=0)
 
 embedded_features_train.astype('float32').tofile('train_embedding.txt') # save trained embedding
 
 embedded_features = []
-for batch_idx, (X_test_query, _, _) in enumerate(testloader):
-    if (X_train_query.shape[0] < BATCH_SIZE):
+triplet_ranks = 0
+print("Generating test embedding...")
+for batch_idx, (X_test_query, X_test_positive, X_test_negative) in enumerate(testloader):
+    if (X_test_query.shape[0] < BATCH_SIZE):
         continue
 
     if use_cuda:
         X_test_query = Variable(X_test_query).cuda()
+        X_test_positive = Variable(X_test_positive).cuda()
+        X_test_negative = Variable(X_test_negative).cuda()
     else:
         X_test_query = Variable(X_test_query)  # .cuda()
+        X_test_positive = Variable(X_test_positive)# .cuda()
+        X_test_negative = Variable(X_test_negative)# .cuda()
 
     embedding = model(X_test_query)
+    embedding_p = model(X_test_positive)
+    embedding_n = model(X_test_negative)
+
     embedding_np = embedding.cpu().detach().numpy()
 
     embedded_features.append(embedding_np)
+
+    correctly_ranked_triplets = correct_triplet(embedding, embedding_p, embedding_n)
+    triplet_ranks += correctly_ranked_triplets
+
+print("Test triplets ranked correctly:", triplet_ranks, triplet_ranks/100000.)
 
 embedded_features_test = np.concatenate(embedded_features, axis=0)
 
