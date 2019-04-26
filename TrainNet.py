@@ -55,10 +55,11 @@ def train_and_eval_model(num_epochs, optim_name=""):
     if use_cuda:
         model.cuda()
 
+
     if optim_name == "adam":
-        optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+        optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE)
     elif optim_name == "rms":
-        optimizer = optim.RMSprop(model.parameters(), lr=LEARNING_RATE)
+        optimizer = optim.RMSprop(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE)
     else:
         # add filtering step
         optimizer = optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE, momentum=0.9, nesterov=True, weight_decay=0.00001)
