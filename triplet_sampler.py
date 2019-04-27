@@ -63,7 +63,7 @@ def generate_triplets(training, dataset_path, num_neg_images,num_pos_images):
     triplets = []
     for class_ in classes:
         image_names = list_pictures(os.path.join(dataset_path, class_+"/images/"))
-        for image_name in image_names[0:10]:
+        for image_name in image_names:
             image_names_set = set(image_names)
             query_image = image_name
             positive_images = get_positive_images(image_name, image_names, num_pos_images)
