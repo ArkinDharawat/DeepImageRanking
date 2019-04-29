@@ -22,7 +22,7 @@ def correct_triplet(anchor, positive, negative, size_average=False):
     distance_negative = (anchor - negative).pow(2).sum(1)  # .pow(.5)
     losses = F.relu(distance_positive - distance_negative + 1.0)
     losses = (losses > 0)
-    print(losses)
+    # print(losses)
     return losses.mean() if size_average else losses.sum()
 
 BATCH_SIZE = 25
@@ -87,7 +87,7 @@ for batch_idx, (X_train_query, X_train_postive, X_train_negative) in enumerate(t
 
             # break
 
-print("Train triplets ranked incorrectly:", triplet_ranks, triplet_ranks/(batches*BATCH_SIZE))
+print("Train triplets ranked correctly:", (batches*BATCH_SIZE) - triplet_ranks, 1 - float(triplet_ranks)/(batches*BATCH_SIZE))
 embedded_features_train = np.concatenate(embedded_features, axis=0)
 
 embedded_features_train.astype('float32').tofile('train_embedding.txt') # save trained embedding
