@@ -21,10 +21,18 @@ def correct_triplet(anchor, positive, negative, size_average=False):
     distance_positive = (anchor - positive).pow(2).sum(1)  # .pow(.5)
     distance_negative = (anchor - negative).pow(2).sum(1)  # .pow(.5)
     losses = F.relu(distance_positive - distance_negative + 1.0)
+    losses = (losses > 0)
+    print(losses)
     return losses.mean() if size_average else losses.sum()
 
-BATCH_SIZE = 24
+BATCH_SIZE = 25
 transform_train = transforms.Compose([
+    transforms.Resize(224, interpolation=2),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+transform_test = transforms.Compose([
     transforms.Resize(224, interpolation=2),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
@@ -33,13 +41,13 @@ train_dataset = DatasetImageNet("training_triplet_sample.csv", transform=transfo
 trainloader =  torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=32)
 
 
-test_dataset = DatasetImageNet("test_triplet_sample.csv", transform=transform_train)
+test_dataset = DatasetImageNet("test_triplet_sample.csv", transform=transform_test)
 testloader =  torch.utils.data.DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=32)
 
 
 
 # model = DeepRank()
-model = torch.load('deepranknet.model')
+model = torch.load('temp_net6.model')
 for param in model.parameters():
     param.requires_grad = False
 if use_cuda:
@@ -48,11 +56,10 @@ model.eval()
 
 
 print("Generating train embedding...")
-
 embedded_features = []
 triplet_ranks = 0
+batches = 0
 for batch_idx, (X_train_query, X_train_postive, X_train_negative) in enumerate(trainloader):
-
             if (X_train_query.shape[0] < BATCH_SIZE):
                 continue
 
@@ -65,7 +72,7 @@ for batch_idx, (X_train_query, X_train_postive, X_train_negative) in enumerate(t
                 X_train_postive = Variable(X_train_postive)#.cuda()
                 X_train_negative = Variable(X_train_negative)#.cuda()
 
-
+            batches+=1
             embedding = model(X_train_query)
             embedding_p = model(X_train_postive)
             embedding_n = model(X_train_negative)
@@ -75,12 +82,12 @@ for batch_idx, (X_train_query, X_train_postive, X_train_negative) in enumerate(t
 
             embedded_features.append(embedding_np)
 
-            correctly_ranked_triplets = correct_triplet(embedding, embedding_p, embedding_n)
-            triplet_ranks += correctly_ranked_triplets
+            incorrectly_ranked_triplets = correct_triplet(embedding, embedding_p, embedding_n)
+            triplet_ranks += incorrectly_ranked_triplets
 
             # break
 
-print("Train triplets ranked correctly:", triplet_ranks, triplet_ranks/100000.)
+print("Train triplets ranked incorrectly:", triplet_ranks, triplet_ranks/(batches*BATCH_SIZE))
 embedded_features_train = np.concatenate(embedded_features, axis=0)
 
 embedded_features_train.astype('float32').tofile('train_embedding.txt') # save trained embedding
@@ -88,6 +95,7 @@ embedded_features_train.astype('float32').tofile('train_embedding.txt') # save t
 embedded_features = []
 triplet_ranks = 0
 print("Generating test embedding...")
+batches = 0
 for batch_idx, (X_test_query, X_test_positive, X_test_negative) in enumerate(testloader):
 
     if (X_test_query.shape[0] < BATCH_SIZE):
@@ -102,7 +110,7 @@ for batch_idx, (X_test_query, X_test_positive, X_test_negative) in enumerate(tes
         X_test_positive = Variable(X_test_positive)# .cuda()
         X_test_negative = Variable(X_test_negative)# .cuda()
 
-
+    batches += 1
     embedding = model(X_test_query)
     embedding_p = model(X_test_positive)
     embedding_n = model(X_test_negative)
@@ -111,10 +119,10 @@ for batch_idx, (X_test_query, X_test_positive, X_test_negative) in enumerate(tes
 
     embedded_features.append(embedding_np)
 
-    correctly_ranked_triplets = correct_triplet(embedding, embedding_p, embedding_n)
-    triplet_ranks += correctly_ranked_triplets
+    incorrectly_ranked_triplets = correct_triplet(embedding, embedding_p, embedding_n)
+    triplet_ranks += incorrectly_ranked_triplets
 
-print("Test triplets ranked correctly:", triplet_ranks, triplet_ranks/2000.)
+print("Test triplets ranked correctly:", (batches*BATCH_SIZE) - triplet_ranks, 1 - float(triplet_ranks)/(batches*BATCH_SIZE))
 
 embedded_features_test = np.concatenate(embedded_features, axis=0)
 
