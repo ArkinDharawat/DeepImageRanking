@@ -9,7 +9,7 @@ Image Similarity using Deep Ranking
     ```
 3. Now to sample triplets we run:
     ```python
-     python triplet_sampler.py --training 1 --num_pos_images 1 --num_neg_images 1
+       python triplet_sampler.py --training 1 --num_pos_images 1 --num_neg_images 1
     ```
     Our command-line arugments are as follows:
       * training: 0 or 1 to sample from train or validation set
@@ -17,12 +17,12 @@ Image Similarity using Deep Ranking
       * num_neg_images: the number of negative images per query image
 4. To train the network run:
     ```python
-    python train_net.py --epochs 1 --optim adam
+       python train_net.py --epochs 1 --optim adam
     ```
     Set choice of optimizer and num of epochs in the same file.
 5. To generate embeddings:
     ```python
-       python gen_emebeddings.py
+        python gen_emebeddings.py
     ```
 6. Run accuracy_notebook for accuracy and ranked examples
 7. If you wish to change the architecture, modify DeepRankNet.py
