@@ -13,7 +13,7 @@ from DeepRankNet import DeepRank
 
 from DatasetLoader import DatasetImageNet
 
-BATCH_SIZE = 24
+BATCH_SIZE = 25
 LEARNING_RATE =  0.001
 VERBOSE  = 1
 
@@ -49,8 +49,14 @@ trainloader =  torch.utils.data.DataLoader(train_dataset, batch_size=BATCH_SIZE,
 def train_and_eval_model(num_epochs, optim_name=""):
     model = DeepRank()
 
-    for param in model.conv_model.features.parameters():
-        param.requires_grad = False # switch off gradients of original ResNet
+    sub_model = list(model.conv_model.features.children())[:-2]
+    for s in sub_model:
+        for param in s.parameters():
+            param.requires_grad = False # switch off all gradients except last two
+
+    # for name, param in model.named_parameters():
+    #     if param.requires_grad:
+    #         print(name)
 
     if use_cuda:
         model.cuda()
@@ -62,7 +68,7 @@ def train_and_eval_model(num_epochs, optim_name=""):
         optimizer = optim.RMSprop(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE)
     else:
         # add filtering step
-        optimizer = optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE, momentum=0.9, nesterov=True, weight_decay=0.00001)
+        optimizer = optim.SGD(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE, momentum=0.9, nesterov=True)
 
     model.train()
     train_loss = []
@@ -100,8 +106,8 @@ def train_and_eval_model(num_epochs, optim_name=""):
 
             train_loss.append(loss.data[0])
             optimizer.step()
-            break
-        break
+            # break
+        # break
         # accuracy_epoch = np.mean(train_accu)
         torch.save(model, 'temp_net'+str(epoch+1)+'.model') # temporary model to save
         loss_epoch = np.mean(train_loss)
