@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 import torch.optim as optim
 from torchvision import transforms
 from torch.autograd import Variable
+import argparse
 #testing
 import numpy as np
 import time
@@ -123,4 +124,26 @@ def train_and_eval_model(num_epochs, optim_name=""):
     torch.save(model, 'deepranknet.model')
 
 if __name__ == '__main__':
-    train_and_eval_model(num_epochs=50)
+    parser = argparse.ArgumentParser(description='Optional app description')
+
+    parser.add_argument('--epochs',
+                        help='A argument for no. of epochs')
+
+    parser.add_argument('--optim',
+                        help='A argument for the optimizer to choose eg: adam')
+
+    args = parser.parse_args()
+    epochs = 0
+    if int(args.epochs) < 0:
+        print('This should be a positive value')
+        quit()
+    else:
+        epochs = int(args.epochs)
+
+    if str(args.optim) not in ["adam", "rms"]:
+        print('switching to default optimizer, SGD+Momentum')
+        optim_name = "sgd"
+    else:
+        optim_name = args.optim.lower()
+
+    train_and_eval_model(num_epochs=epochs, optim_name=optim_name)
