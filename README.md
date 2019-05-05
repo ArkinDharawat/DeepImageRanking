@@ -17,7 +17,7 @@ Image Similarity using Deep Ranking
       * num_neg_images: the number of negative images per query image
 4. To train the network run:
     ```bash
-       python train_net.py --epochs 1 --optim adam
+       python train_net.py --epochs 1 --optim sgd
     ```
     Set choice of optimizer and num of epochs in the same file.
 5. To generate embeddings:
@@ -29,7 +29,7 @@ Image Similarity using Deep Ranking
 
 ## Presentation&Report
 * [Presentation](https://docs.google.com/presentation/d/1xaKeIYj5TqKzvNuD_WDcW9UHhT6Qf2lQaFQRUTULKuM/edit?usp=sharing)
-* [Report](http://google.com)
+* [Report](https://drive.google.com/file/d/1DW1zgqqkWmUGaa6l_QywU1uA5-DIMTRu/view)
 ## Resources:
 * [Deep Ranking paper](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42945.pdf)
 * [398 Project Description](https://courses.engr.illinois.edu/ie534/fa2018/ImageRankingProject.pdf)
