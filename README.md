@@ -4,11 +4,11 @@ Image Similarity using Deep Ranking
 ## Documentation
 1. Download the TinyImageNet dataset
 2. Change the folder structure of the validation set by running:
-    ```python
+    ```bash
     python transform_validation.py
     ```
 3. Now to sample triplets we run:
-    ```python
+    ```bash
        python triplet_sampler.py --training 1 --num_pos_images 1 --num_neg_images 1
     ```
     Our command-line arugments are as follows:
@@ -16,18 +16,20 @@ Image Similarity using Deep Ranking
       * num_pos_images: the number of positive images per query image
       * num_neg_images: the number of negative images per query image
 4. To train the network run:
-    ```python
+    ```bash
        python train_net.py --epochs 1 --optim adam
     ```
     Set choice of optimizer and num of epochs in the same file.
 5. To generate embeddings:
-    ```python
+    ```bash
         python gen_emebeddings.py
     ```
 6. Run accuracy_notebook for accuracy and ranked examples
 7. If you wish to change the architecture, modify DeepRankNet.py
 
-
+## Presentation&Report
+* [Presentation](https://docs.google.com/presentation/d/1xaKeIYj5TqKzvNuD_WDcW9UHhT6Qf2lQaFQRUTULKuM/edit?usp=sharing)
+* [Report](http://google.com)
 ## Resources:
 * [Deep Ranking paper](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42945.pdf)
 * [398 Project Description](https://courses.engr.illinois.edu/ie534/fa2018/ImageRankingProject.pdf)

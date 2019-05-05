@@ -57,7 +57,9 @@ def train_and_eval_model(num_epochs, optim_name=""):
 
     # for name, param in model.named_parameters():
     #     if param.requires_grad:
-    #         print(name)
+    #         print(name, param.data.shape)
+    #
+    # return
 
     if use_cuda:
         model.cuda()

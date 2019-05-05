@@ -16,6 +16,18 @@ def list_pictures(directory):
             for root, _, files in os.walk(directory) for f in files]
 
 def get_negative_images(all_images,image_names,num_neg_images):
+    """Get out class images
+
+    Parameters
+    ----------
+    all_images: all images
+    image_names: all image names
+    num_neg_images: number of negative image per query image
+
+    Returns
+    -------
+    path to negative image
+    """
     random_numbers = np.arange(len(all_images))
     np.random.shuffle(random_numbers)
     if int(num_neg_images)>(len(all_images)-1):
@@ -31,6 +43,18 @@ def get_negative_images(all_images,image_names,num_neg_images):
     return negative_images
 
 def get_positive_images(image_name,image_names,num_pos_images):
+    """Get in class images
+
+    Parameters
+    ----------
+    all_images: all images
+    image_names: all image names
+    num_neg_images: number of negative image per query image
+
+    Returns
+    -------
+    path to positive image
+    """
     random_numbers = np.arange(len(image_names))
     np.random.shuffle(random_numbers)
     if int(num_pos_images)>(len(image_names)-1):
@@ -46,13 +70,18 @@ def get_positive_images(image_name,image_names,num_pos_images):
     return positive_images
 
 def generate_triplets(training, dataset_path, num_neg_images,num_pos_images):
-    """
-    Generate query, postivie and negative image triplets for training/testing
-    :param training: 0 or 1 based on training or testing dataset
-    :param dataset_path: the dataset path
-    :param num_neg_images: number of negative images per query
-    :param num_pos_images: number of positive images per query
-    :return: void
+    """ Generate pre-sampled triplet dataset
+
+    Parameters
+    ----------
+    training: 0/1 based on training testing ot testing data
+    dataset_path: path to dataset
+    num_neg_images: number of negative images per query image
+    num_pos_images: number of positive images per query image
+
+    Returns
+    -------
+    Void, setups triplet dataset in .csv file
     """
     triplet_dataframe = pd.DataFrame(columns=["query", "positive", "negative"])
 

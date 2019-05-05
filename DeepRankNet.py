@@ -7,21 +7,6 @@ import torchvision.transforms as transforms
 
 from torch.autograd import Variable
 
-
-# def resnet101(pretrained=False, **kwargs):
-#     """
-#     Construct a ResNet-101 model.
-#     Args:
-#         pretrained (bool): If True, returns a model pre-trained on ImageNet
-#     """
-#     model = torchvision.models.resnet.ResNet(
-#         torchvision.models.resnet.BasicBlock, [3, 4, 23, 3])
-#     if pretrained:
-#         model.load_state_dict(torch.utils.model_zoo.load_url(
-#             'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth', model_dir='../resnet101'), strict=False)
-#     return ConvNet(model)
-
-
 class ConvNet(nn.Module):
     """EmbeddingNet using ResNet-101."""
 
@@ -51,12 +36,12 @@ class DeepRank(nn.Module):
     def __init__(self):
         super(DeepRank, self).__init__()
 
-        self.conv_model = ConvNet()
+        self.conv_model = ConvNet() # ResNet101
 
-        self.conv1 = torch.nn.Conv2d(in_channels=3, out_channels=96, kernel_size=8, padding=1, stride=16)
+        self.conv1 = torch.nn.Conv2d(in_channels=3, out_channels=96, kernel_size=8, padding=1, stride=16) # 1st sub sampling
         self.maxpool1 = torch.nn.MaxPool2d(kernel_size=3, stride=4, padding=1)
 
-        self.conv2 = torch.nn.Conv2d(in_channels=3, out_channels=96, kernel_size=8, padding=4, stride=32)
+        self.conv2 = torch.nn.Conv2d(in_channels=3, out_channels=96, kernel_size=8, padding=4, stride=32) # 2nd sub sampling
         self.maxpool2 = torch.nn.MaxPool2d(kernel_size=7, stride=2, padding=3)
 
         self.dense_layer = torch.nn.Linear(in_features=(4096+3072), out_features=4096)
