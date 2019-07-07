@@ -79,9 +79,9 @@ def train_and_eval_model(num_epochs, optim_name=""):
                 X_train_postive = Variable(X_train_postive).cuda()
                 X_train_negative = Variable(X_train_negative).cuda()
             else:
-                X_train_query = Variable(X_train_query)  # .cuda()
-                X_train_postive = Variable(X_train_postive)  # .cuda()
-                X_train_negative = Variable(X_train_negative)  # .cuda()
+                X_train_query = Variable(X_train_query)
+                X_train_postive = Variable(X_train_postive)
+                X_train_negative = Variable(X_train_negative)
 
             optimizer.zero_grad()  # set gradient to 0
 
