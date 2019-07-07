@@ -2,7 +2,7 @@ import os
 
 """File to change structure of validation folder"""
 
-validation_path = "tiny-imagenet-200/val/"
+validation_path = "../tiny-imagenet-200/val/"
 
 annotation_file_path = os.path.join(validation_path, "val_annotations.txt")
 
@@ -10,7 +10,7 @@ annotation_file = open(annotation_file_path, "r")
 for line in annotation_file:
     image, folder = line.strip().split()[0:2]
 
-    image_path = os.path.join(validation_path, "images/"+image)
+    image_path = os.path.join(validation_path, "images/" + image)
     folder_path = os.path.join(validation_path, folder)
 
     if not os.path.exists(folder_path):
@@ -18,6 +18,6 @@ for line in annotation_file:
         if not os.path.exists(os.path.join(folder_path, "images")):
             print(os.makedirs(os.path.join(folder_path, "images")))
 
-    os.rename(image_path, os.path.join(folder_path, "images/"+image)) # TODO: maybe replace with shutil
+    os.rename(image_path, os.path.join(folder_path, "images/" + image))
 
     # break

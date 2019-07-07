@@ -1,11 +1,7 @@
-import os
 import torch
-import torchvision
 import torch.nn as nn
 import torchvision.models as models
-import torchvision.transforms as transforms
 
-from torch.autograd import Variable
 
 class ConvNet(nn.Module):
     """EmbeddingNet using ResNet-101."""
@@ -29,23 +25,26 @@ class ConvNet(nn.Module):
 
         return out
 
+
 class DeepRank(nn.Module):
     """
     Deep Image Rank Architecture
     """
+
     def __init__(self):
         super(DeepRank, self).__init__()
 
-        self.conv_model = ConvNet() # ResNet101
+        self.conv_model = ConvNet()  # ResNet101
 
-        self.conv1 = torch.nn.Conv2d(in_channels=3, out_channels=96, kernel_size=8, padding=1, stride=16) # 1st sub sampling
+        self.conv1 = torch.nn.Conv2d(in_channels=3, out_channels=96, kernel_size=8, padding=1,
+                                     stride=16)  # 1st sub sampling
         self.maxpool1 = torch.nn.MaxPool2d(kernel_size=3, stride=4, padding=1)
 
-        self.conv2 = torch.nn.Conv2d(in_channels=3, out_channels=96, kernel_size=8, padding=4, stride=32) # 2nd sub sampling
+        self.conv2 = torch.nn.Conv2d(in_channels=3, out_channels=96, kernel_size=8, padding=4,
+                                     stride=32)  # 2nd sub sampling
         self.maxpool2 = torch.nn.MaxPool2d(kernel_size=7, stride=2, padding=3)
 
-        self.dense_layer = torch.nn.Linear(in_features=(4096+3072), out_features=4096)
-
+        self.dense_layer = torch.nn.Linear(in_features=(4096 + 3072), out_features=4096)
 
     def forward(self, X):
         conv_input = self.conv_model(X)
@@ -58,17 +57,15 @@ class DeepRank(nn.Module):
         first_norm = first_input.norm(p=2, dim=1, keepdim=True)
         first_input = first_input.div(first_norm.expand_as(first_input))
 
-
         second_input = self.conv2(X)
         second_input = self.maxpool2(second_input)
         second_input = second_input.view(second_input.size(0), -1)
         second_norm = second_input.norm(p=2, dim=1, keepdim=True)
         second_input = second_input.div(second_norm.expand_as(second_input))
 
-        merge_subsample = torch.cat([first_input, second_input], 1) # batch x (3072)
+        merge_subsample = torch.cat([first_input, second_input], 1)  # batch x (3072)
 
-        merge_conv = torch.cat([merge_subsample, conv_input], 1) #  batch x (4096 + 3072)
-
+        merge_conv = torch.cat([merge_subsample, conv_input], 1)  # batch x (4096 + 3072)
 
         final_input = self.dense_layer(merge_conv)
         final_norm = final_input.norm(p=2, dim=1, keepdim=True)

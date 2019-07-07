@@ -25,13 +25,12 @@ Image Similarity using Deep Ranking
         python gen_emebeddings.py
     ```
 6. Run accuracy_notebook for accuracy and ranked examples
-7. If you wish to change the architecture, modify DeepRankNet.py
+7. If you wish to change the architecture, modify deep_rank_net.py
 
 ## Presentation&Report
 * [Presentation](https://docs.google.com/presentation/d/1xaKeIYj5TqKzvNuD_WDcW9UHhT6Qf2lQaFQRUTULKuM/edit?usp=sharing)
 * [Report](https://drive.google.com/file/d/1DW1zgqqkWmUGaa6l_QywU1uA5-DIMTRu/view)
 ## Resources:
 * [Deep Ranking paper](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42945.pdf)
-* [398 Project Description](https://courses.engr.illinois.edu/ie534/fa2018/ImageRankingProject.pdf)
 * [Project proposal](https://docs.google.com/document/d/1E-2L40X_JUdAb0NssXYnlJTNekLNMuN0z_-Z9KvrexQ/edit)
 * [Implementation in Keras](https://github.com/akarshzingade/image-similarity-deep-ranking)

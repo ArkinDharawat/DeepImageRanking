@@ -1,17 +1,14 @@
-import numpy as np  # linear algebra
-import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
-from matplotlib.image import imread
-
-import torch
-from torch.utils.data import DataLoader, Dataset
-import torchvision
-from torchvision import transforms
+import pandas as pd
 from PIL import Image
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms
+
 
 class DatasetImageNet(Dataset):
     """
     Dataset class for tiny Image net dataset
     """
+
     def __init__(self, file_path, transform=None):
         self.data = pd.read_csv(file_path)
         self.transform = transform
@@ -20,8 +17,8 @@ class DatasetImageNet(Dataset):
         return len(self.data)
 
     def __getitem__(self, index):
-        row = self.data.iloc[index,:]
-        images = [Image.open(row[i]).convert('RGB') for i in range(0, 3)]
+        row = self.data.iloc[index, :]
+        images = [Image.open(row[i]).convert('RGB') for i in range(0, 3)]  # open triplet images as RGB
 
         if self.transform is not None:
             for i in range(0, 3):
@@ -33,10 +30,7 @@ class DatasetImageNet(Dataset):
 
 
 def test_dataloader():
-    """
-    Method to test dataloader
-    :return: Void
-    """
+    """Method to test dataloader"""
     transform_train = transforms.Compose([
         transforms.Resize(224, interpolation=2),
         transforms.ToTensor(),
@@ -49,11 +43,12 @@ def test_dataloader():
     train_iter = iter(train_loader)
     print(type(train_iter))
 
-    q,p,n = train_iter.next()
+    q, p, n = train_iter.next()
 
     print('images shape on batch size = {}'.format(q.size()))
     print('images shape on batch size = {}'.format(p.size()))
     print('images shape on batch size = {}'.format(n.size()))
+
 
 if __name__ == '__main__':
     test_dataloader()
