@@ -37,7 +37,7 @@ def test_dataloader():
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
-    train_dataset = DatasetImageNet("training_triplet_sample.csv", transform=transform_train)
+    train_dataset = DatasetImageNet("../training_triplet_sample.csv", transform=transform_train)
     train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
 
     train_iter = iter(train_loader)

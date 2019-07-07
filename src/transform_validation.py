@@ -2,7 +2,7 @@ import os
 
 """File to change structure of validation folder"""
 
-validation_path = "../tiny-imagenet-200/val/"
+validation_path = "tiny-imagenet-200/val/"
 
 annotation_file_path = os.path.join(validation_path, "val_annotations.txt")
 
