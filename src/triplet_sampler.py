@@ -75,7 +75,7 @@ def generate_triplets(training, dataset_path, num_neg_images, num_pos_images):
 
     Parameters
     ----------
-    training: 0/1 based on training testing ot testing data
+    training: 0/1 based on training or validation data triplet creation
     dataset_path: path to dataset
     num_neg_images: number of negative images per query image
     num_pos_images: number of positive images per query image
@@ -110,7 +110,7 @@ def generate_triplets(training, dataset_path, num_neg_images, num_pos_images):
     if training:
         triplet_dataframe.to_csv("../training_triplet_sample.csv", index=False)
     else:
-        triplet_dataframe.to_csv("../test_triplet_sample.csv", index=False)
+        triplet_dataframe.to_csv("../val_triplet_sample.csv", index=False)
 
     print(".csv generated!")
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Optional app description')
 
     parser.add_argument('--training',
-                        help='A argument for training/testing')
+                        help='A argument for training/validation')
 
     parser.add_argument('--num_pos_images',
                         help='A argument for the number of Positive images per Query image')
@@ -146,7 +146,7 @@ if __name__ == '__main__':
         print(dataset_path + " path does not exist!")
         quit()
 
-    print("Are we training? " + args.training)
+    print("Training triplets") if int(args.training) else print("Validation triplets")
     print("Grabbing images from: " + dataset_path)
     print("Number of Positive image per Query image: " + args.num_pos_images)
     print("Number of Negative image per Query image: " + args.num_neg_images)

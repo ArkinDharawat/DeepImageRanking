@@ -17,7 +17,7 @@ Image Similarity using Deep Ranking
       * num_pos_images: the number of positive images per query image
       * num_neg_images: the number of negative images per query image
 
-    This should generate `training_triplet_sample.csv` or `test_triplet_sample.csv` based on the argument provided.
+    This should generate `training_triplet_sample.csv` or `val_triplet_sample.csv` based on the argument provided.
 
 2. To implement we use a pre-trained ResNet-101 with two sub-sampling layers. We finetune the earlier layers of the ResNet and train the rest. The PyTorch implementation can be found in the file `deep_rank_net.py`
 4. To train the network run:
